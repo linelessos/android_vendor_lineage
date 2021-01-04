@@ -40,6 +40,7 @@ except ImportError:
 from xml.etree import ElementTree
 
 product = sys.argv[1]
+default_rem = "github"
 
 if len(sys.argv) > 2:
     depsonly = sys.argv[2]
@@ -185,16 +186,25 @@ def add_to_manifest(repositories, fallback_branch = None):
         lm = ElementTree.Element("manifest")
 
     for repository in repositories:
+        if 'remote' in repository:
+            repo_remote = repository['remote']
+        else:
+            repo_remote = default_rem
         repo_name = repository['repository']
         repo_target = repository['target_path']
+
         print('Checking if %s is fetched from %s' % (repo_target, repo_name))
         if is_in_manifest(repo_target):
             print('linelessos/%s already fetched to %s' % (repo_name, repo_target))
             continue
 
-        print('Adding dependency: linelessos/%s -> %s' % (repo_name, repo_target))
+        repo_path = repo_name
+        if repo_remote == default_rem:
+            repo_path = ("linelessos/%s" % repo_name)
+
+        print('Adding dependency: %s -> %s' % (repo_name, repo_target))
         project = ElementTree.Element("project", attrib = { "path": repo_target,
-            "remote": "github", "name": "linelessos/%s" % repo_name })
+            "remote": repo_remote, "name": "%s" % repo_path })
 
         if 'branch' in repository:
             project.set('revision',repository['branch'])

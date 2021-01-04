@@ -40,6 +40,7 @@ except ImportError:
 from xml.etree import ElementTree
 
 product = sys.argv[1]
+default_rem = "github"
 
 if len(sys.argv) > 2:
     depsonly = sys.argv[2]
@@ -123,12 +124,6 @@ def get_manifest_path():
     except IndexError:
         return ".repo/manifests/{}".format(m.find("include").get("name"))
 
-def get_default_remote():
-    m = ElementTree.parse(get_manifest_path())
-    d = m.findall('default')[0]
-    r = d.get('remote')
-    return r.replace('refs/heads/', '').replace('refs/tags/', '')
-
 def get_default_revision():
     m = ElementTree.parse(get_manifest_path())
     d = m.findall('default')[0]
@@ -191,10 +186,10 @@ def add_to_manifest(repositories, fallback_branch = None):
         lm = ElementTree.Element("manifest")
 
     for repository in repositories:
-        if repository['remote']:
+        if 'remote' in repository:
             repo_remote = repository['remote']
         else:
-            repo_remote = get_default_remote()
+            repo_remote = default_rem
         repo_name = repository['repository']
         repo_target = repository['target_path']
 
@@ -204,8 +199,8 @@ def add_to_manifest(repositories, fallback_branch = None):
             continue
 
         repo_path = repo_name
-        if repo_remote == get_default_remote():
-            repo_path = ("LineageOS/%s" % repo_name)
+        if repo_remote == default_rem:
+            repo_path = ("linelessos/%s" % repo_name)
 
         print('Adding dependency: %s -> %s' % (repo_name, repo_target))
         project = ElementTree.Element("project", attrib = { "path": repo_target,

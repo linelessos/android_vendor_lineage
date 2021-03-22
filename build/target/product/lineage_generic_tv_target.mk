@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-$(call inherit-product, vendor/lineage/config/common_full_phone.mk)
+$(call inherit-product, build/target/product/gsi_release.mk)
+$(call inherit-product, device/google/atv/products/atv_base.mk)
+$(call inherit-product, vendor/lineage/config/common_full_tv.mk)
 
 PRODUCT_COPY_FILES += \
     device/generic/goldfish/data/etc/permissions/privapp-permissions-goldfish.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/privapp-permissions-goldfish.xml \
